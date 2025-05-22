@@ -3,7 +3,7 @@ import { loadCommands } from "./loadCommands.ts";
 import { ExtendedClient } from "./types.ts";
 
 const client = new ExtendedClient({
-  intents: [GatewayIntentsBitField.Flags.Guilds],
+  intents: [GatewayIntentBits.Guilds],
 });
 
 // commands の読み込み

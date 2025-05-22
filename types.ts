@@ -1,5 +1,5 @@
 // types.ts
-import { Client, Collection, GatewayIntents } from "npm:discord.js";
+import { GatewayIntentBits, Collection } from "npm:discord.js";
 import type { Command } from "./commands.ts"; // Command型があれば
 
 export class ExtendedClient extends Client {
