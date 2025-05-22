@@ -1,6 +1,6 @@
 // app.ts (Deno対応)
 import { Client, GatewayIntentBits, Collection } from "https://esm.sh/discord.js@14.13.0";
-import { loadCommands } from "./utils/loadCommands.ts";
+import { loadCommands } from "./loadCommands.ts";
 
 // 環境変数は Deno.env.get で取得
 const TOKEN = Deno.env.get("DISCORD_TOKEN");
