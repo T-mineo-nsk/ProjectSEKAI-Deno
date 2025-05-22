@@ -5,11 +5,12 @@ const client = new Client({
   intents: [GatewayIntentsBitField.Flags.Guilds],
 });
 
-(client.commands as any) = new Collection();
-const commands = loadCommands();
+// commands コレクションを初期化
+client["commands"] = new Collection();
 
+const commands = loadCommands();
 for (const command of commands) {
-  client.commands.set(command.data.name, command);
+  client["commands"].set(command.data.name, command);
 }
 
 client.once("ready", () => {
@@ -19,7 +20,7 @@ client.once("ready", () => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  const command = client.commands.get(interaction.commandName);
+  const command = client["commands"].get(interaction.commandName);
   if (!command) return;
 
   try {
