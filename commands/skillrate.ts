@@ -2,7 +2,7 @@ import {
   ApplicationCommandOptionTypes,
   ApplicationCommandTypes,
   Interaction,
-} from "./deps.ts";
+} from "../deps.ts";
 import { createCommand } from "../utils/createCommand.ts";
 
 export const skillrate = createCommand({

@@ -1,7 +1,7 @@
 import {
   createSlashCommand,
   Interaction,
-} from "./deps.ts";
+} from "../deps.ts";
 
 export const eventpoint = createSlashCommand({
   name: "eventpoint",
