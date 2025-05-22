@@ -1,22 +1,24 @@
-// app.ts (Deno対応)
-import { Client, GatewayIntentBits, Collection } from "https://esm.sh/discord.js@14.13.0";
+import { load } from "https://deno.land/std@0.223.0/dotenv/mod.ts";
+import { Client, GatewayIntentsBitField, Collection } from "npm:discord.js";
 import { loadCommands } from "./loadCommands.ts";
 
-// 環境変数は Deno.env.get で取得
-const TOKEN = Deno.env.get("DISCORD_TOKEN");
-if (!TOKEN) throw new Error("DISCORD_TOKEN が設定されていません");
+const env = await load();
+const client = new Client({
+  intents: [GatewayIntentsBitField.Flags.Guilds],
+});
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
+const commands = loadCommands();
 
-// コマンド読み込み
-await loadCommands(client);
+for (const command of commands) {
+  client.commands.set(command.data.name, command);
+}
 
 client.once("ready", () => {
   console.log(`ログイン成功: ${client.user.tag}`);
 });
 
-client.on("interactionCreate", async interaction => {
+client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   const command = client.commands.get(interaction.commandName);
@@ -26,8 +28,11 @@ client.on("interactionCreate", async interaction => {
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
-    await interaction.reply({ content: "エラーが発生しました", ephemeral: true });
+    await interaction.reply({
+      content: "エラーが発生しました",
+      ephemeral: true,
+    });
   }
 });
 
-client.login(TOKEN);
+await client.login(env["DISCORD_TOKEN"]);

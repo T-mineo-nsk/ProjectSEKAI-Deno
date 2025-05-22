@@ -1,61 +1,65 @@
-// commands/eventpoint.ts
-import { SlashCommandBuilder } from "https://esm.sh/discord.js@14.13.0";
-
-export const eventPointCommand = {
-  data: new SlashCommandBuilder()
-    .setName("eventpoint")
-    .setDescription("イベントポイントを計算します")
-    .addIntegerOption(opt =>
-      opt.setName("score")
-        .setDescription("自分のスコア（例: 85000）")
-        .setRequired(true)
-    )
-    .addIntegerOption(opt =>
-      opt.setName("unitbonus")
-        .setDescription("編成ボーナス（%表記の数値、例: 650）")
-        .setRequired(true)
-    )
-    .addNumberOption(opt =>
-      opt.setName("stage")
-        .setDescription("ステージ倍率（例: 1.5）")
-        .setRequired(true)
-    )
-    .addIntegerOption(opt =>
-      opt.setName("playpoint")
-        .setDescription("消費プレイポイント（例: 10, 20, 30, 40）")
-        .setRequired(true)
-    ),
-
+const eventpoint = {
+  data: {
+    name: "eventpoint",
+    description: "イベントポイントを計算します",
+    options: [
+      {
+        name: "score",
+        type: 4, // INTEGER
+        description: "あなたのスコア",
+        required: true,
+      },
+      {
+        name: "unit_bonus",
+        type: 3, // STRING（例: "+650%"）
+        description: "編成ボーナス（例: +650%）",
+        required: true,
+      },
+      {
+        name: "stage_rate",
+        type: 4, // INTEGER
+        description: "ステージ倍率（例: 100）",
+        required: true,
+      },
+      {
+        name: "play_point",
+        type: 4, // INTEGER
+        description: "消費プレイポイント（例: 10, 20, 30）",
+        required: true,
+      },
+    ],
+  },
   async execute(interaction) {
-    const score = interaction.options.getInteger("score")!;
-    const unitBonus = interaction.options.getInteger("unitbonus")!;
-    const stageRate = interaction.options.getNumber("stage")!;
-    const playPoint = interaction.options.getInteger("playpoint")!;
+    const score = interaction.options.getInteger("score");
+    const unitBonus = interaction.options.getString("unit_bonus");
+    const stageRate = interaction.options.getInteger("stage_rate");
+    const playPoint = interaction.options.getInteger("play_point");
 
-    // 固定: 他スコアボーナス
+    // 自スコアボーナス計算
+    const myScoreBonus = Math.floor(score / 17000);
     const otherScoreBonus = 13;
-    const selfScoreBonus = Math.floor(score / 17000);
 
-    // 編成ボーナスの倍率（例：650% → 7.5倍）
-    const unitBonusRate = (unitBonus + 100) / 100;
-
-    // プレイボーナスの倍率テーブル
-    const playBonusTable: Record<number, number> = {
-      10: 1.0,
-      20: 1.5,
-      30: 2.0,
-      40: 2.5,
-    };
-
-    const playBonus = playBonusTable[playPoint];
-    if (!playBonus) {
-      await interaction.reply("プレイポイントは 10, 20, 30, 40 のいずれかにしてください。");
+    // 編成ボーナス（"+650%" → 7.5 に変換）
+    const bonusMatch = unitBonus.match(/\+(\d+)%/);
+    if (!bonusMatch) {
+      await interaction.reply("編成ボーナスの形式が不正です（例: +650%）");
       return;
     }
+    const unitBonusRate = 1 + parseInt(bonusMatch[1], 10) / 100;
 
-    const base = 110 + selfScoreBonus + otherScoreBonus;
-    const result = base * unitBonusRate * (stageRate / 100) * playBonus;
+    // プレイポイントに対応したプレイボーナス
+    const playBonusMap = {
+      10: 1.0,
+      20: 2.2,
+      30: 3.6,
+    };
+    const playBonus = playBonusMap[playPoint] ?? 1.0;
 
-    await interaction.reply(`イベントポイントは **${Math.floor(result)}pt** です。`);
-  }
+    const basePoint = 110 + myScoreBonus + otherScoreBonus;
+    const eventPoint = Math.floor(basePoint * unitBonusRate * stageRate / 100 * playBonus);
+
+    await interaction.reply(`イベントポイント: ${eventPoint}`);
+  },
 };
+
+export default eventpoint;
