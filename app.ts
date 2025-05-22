@@ -1,16 +1,12 @@
-import { GatewayIntentsBitField, Collection } from "npm:discord.js";
+// app.ts
+import { Client, GatewayIntentsBitField, Collection } from "npm:discord.js";
 import { loadCommands } from "./loadCommands.ts";
-import { ExtendedClient } from "./types.ts";
 
-const client = new ExtendedClient({
-  intents: [GatewayIntentBits.Guilds],
+const client = new Client({
+  intents: [GatewayIntentsBitField.Flags.Guilds],
 });
 
-// commands の読み込み
-const commands = loadCommands();
-for (const command of commands) {
-  client.commands.set(command.data.name, command);
-}
+const commands = loadCommands(); // Collection<string, Command>
 
 client.once("ready", () => {
   console.log(`ログイン成功: ${client.user.tag}`);
@@ -19,7 +15,7 @@ client.once("ready", () => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  const command = client.commands.get(interaction.commandName);
+  const command = commands.get(interaction.commandName);
   if (!command) return;
 
   try {

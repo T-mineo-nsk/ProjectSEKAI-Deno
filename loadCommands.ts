@@ -1,6 +1,11 @@
-import eventpoint from "./commands/eventpoint.ts";
-import skillrate from "./commands/skillrate.ts";
+// loadCommands.ts
+import { Collection } from "npm:discord.js";
+import * as eventpoint from "./commands/eventpoint.ts";
+import * as skillrate from "./commands/skillrate.ts";
 
 export function loadCommands() {
-  return [eventpoint, skillrate];
+  const commands = new Collection<string, any>();
+  commands.set(eventpoint.data.name, eventpoint);
+  commands.set(skillrate.data.name, skillrate);
+  return commands;
 }
