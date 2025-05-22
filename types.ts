@@ -1,10 +1,7 @@
-// commands.ts
-import type { ChatInputCommandInteraction } from "npm:discord.js";
+// types.ts
+import { Client, Collection } from "npm:discord.js";
+import type { Command } from "./commands.ts"; // Commandの型があれば
 
-export interface Command {
-  data: {
-    name: string;
-    // 他に必要なコマンド情報
-  };
-  execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+export interface ExtendedClient extends Client {
+  commands: Collection<string, Command>;
 }
