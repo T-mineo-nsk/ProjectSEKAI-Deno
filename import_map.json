@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "discord.js": "https://esm.sh/discord.js@14.13.0",
+    "dotenv": "https://deno.land/x/dotenv@v3.2.2/mod.ts"
+  }
+}
