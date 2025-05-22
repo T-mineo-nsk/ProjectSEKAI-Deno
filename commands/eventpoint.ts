@@ -1,7 +1,7 @@
 import {
   createSlashCommand,
   Interaction,
-} from "https://deno.land/x/discordeno@18.0.1/interactions/mod.ts";
+} from "./deps.ts";
 
 export const eventpoint = createSlashCommand({
   name: "eventpoint",

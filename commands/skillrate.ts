@@ -2,7 +2,7 @@ import {
   ApplicationCommandOptionTypes,
   ApplicationCommandTypes,
   Interaction,
-} from "https://deno.land/x/discordeno@18.0.1/mod.ts";
+} from "./deps.ts";
 import { createCommand } from "../utils/createCommand.ts";
 
 export const skillrate = createCommand({
