@@ -1,13 +1,11 @@
-import { load } from "https://deno.land/std@0.223.0/dotenv/mod.ts";
 import { Client, GatewayIntentsBitField, Collection } from "npm:discord.js";
 import { loadCommands } from "./loadCommands.ts";
 
-const env = await load();
 const client = new Client({
   intents: [GatewayIntentsBitField.Flags.Guilds],
 });
 
-client.commands = new Collection();
+(client.commands as any) = new Collection();
 const commands = loadCommands();
 
 for (const command of commands) {
@@ -35,4 +33,9 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-await client.login(env["DISCORD_TOKEN"]);
+const token = Deno.env.get("DISCORD_TOKEN");
+if (!token) {
+  console.error("DISCORD_TOKEN が設定されていません");
+  Deno.exit(1);
+}
+await client.login(token);
