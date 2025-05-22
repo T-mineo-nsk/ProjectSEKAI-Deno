@@ -2,7 +2,7 @@ import {
   startBot,
   Intents,
   createBot,
-} from "discordeno/";
+} from "https://deno.land/x/discordeno@18.0.1/mod.ts";
 import { eventpoint } from "./commands/eventpoint.ts";
 import { skillrate } from "./commands/skillrate.ts";
 
