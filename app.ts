@@ -1,37 +1,31 @@
-// app.ts
-import { Client, GatewayIntentsBitField, Collection } from "npm:discord.js";
-import { loadCommands } from "./loadCommands.ts";
-
-const client = new Client({
-  intents: [GatewayIntentsBitField.Flags.Guilds],
-});
-
-const commands = loadCommands(); // Collection<string, Command>
-
-client.once("ready", () => {
-  console.log(`ログイン成功: ${client.user.tag}`);
-});
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-
-  const command = commands.get(interaction.commandName);
-  if (!command) return;
-
-  try {
-    await command.execute(interaction);
-  } catch (error) {
-    console.error(error);
-    await interaction.reply({
-      content: "エラーが発生しました",
-      ephemeral: true,
-    });
-  }
-});
+import {
+  startBot,
+  Intents,
+  createBot,
+} from "discordeno/";
+import { eventpoint } from "./commands/eventpoint.ts";
+import { skillrate } from "./commands/skillrate.ts";
 
 const token = Deno.env.get("DISCORD_TOKEN");
-if (!token) {
-  console.error("DISCORD_TOKEN が設定されていません");
+const botId = BigInt(Deno.env.get("DISCORD_APP_ID"));
+
+if (!token || !botId) {
+  console.error("DISCORD_TOKEN と DISCORD_APP_ID が必要です");
   Deno.exit(1);
 }
-await client.login(token);
+
+const bot = createBot({
+  token,
+  botId,
+  intents: Intents.Guilds,
+  events: {
+    ready() {
+      console.log("✅ Bot が起動しました");
+    },
+  },
+});
+
+bot.utils.applicationCommands.create(eventpoint);
+bot.utils.applicationCommands.create(skillrate);
+
+await startBot(bot);
